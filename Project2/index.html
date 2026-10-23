@@ -2,14 +2,68 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Project 2 documentation</title>
+    <title>Moss Growth Simulation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Project 2 documentation</h1>
+    <h1>Moss Growth Simulation</h1>
     <main>
         <section>
-            <p>Growing, super blooms</p>
+            <h2>1 Observe</h2>
+            <p>_Photographs of moss</p>
+            <p>_Textile featuring moss, from gift shop in Saiho-ji (Moss Temple)</p>
+            <img src="image/photos.png" alt="Photos of moss">
+
+            <h3>Rules derived from moss growth:</h3>
+            <p>_Spores are carried by the wind and land on the ground.</p>
+            <p>_Growth occurs only in damp, shaded areas.</p>
+            <p>_Patches expand gradually outward from their edges.</p>
+            <p>_When different species encounter one another, they stop spreading, resulting in distinct, territorial patches.</p>
+
+            <h3>Concept:</h3>
+            <p>Use p5.js to simulate the growth of moss on the ground, with a visual style inspired by the moss-covered landscapes of Saihō-ji (Kokedera) Temple.</p>
+
+            <h2>02 Sketch</h2>
+            <p>Visualizing the growth process of moss.</p>
+            <img src="image/sketchs.png" alt="sketchs">
+
+            <h2>03 Connect</h2>
+            <h3>System Components:</h3>
+            <p>Agents: Spores. They drift randomly across the screen; when they encounter existing moss and the location is sufficiently humid, they settle and take root.</p>            
+            <p>Field: A humidity map. This determines where moss can grow and which specific type will flourish in a given area.</p>            
+            <p>Multiple Moss Species: Each species has different humidity preferences; they expand independently and compete with one another for territory.</p>
+
+           <h3>Iteration process:</h3>
+
+           <img src="image/process_1.png" alt="process_1">
+           <p>The first version relied too heavily on the fabric pattern from in Saiho-ji temples. The color looks muddy.</p>
+
+            <img src="image/process_2.png" alt="process_2">
+            <p>Change the background color to white and increase the saturation of the three shades of moss green. It looks much cleaner now.</p>
+            
+            <img src="image/process_3.png" alt="process_3">
+            <p>Move the control panel and UI elements to the side of the canvas rather than below it. Refine the design details of the sliders and buttons. Add color-coded labels for the different types of moss.</p>
+
+            <img src="image/process_4.png" alt="process_4">
+            <p>Adjust the 'fill' value to further increase the differentiation from the reference. Looks like changed too much.</p>
+
+            <img src="image/process_5.png" alt="process_5">
+            <p>Adjusted the 'fill' value slightly—this is the effect I was looking for.</p>
+
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/aYeWQNDAvwg" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <p>The video documents a simulation of moss growth under the influence of two different humidity maps.</p>
+
+            <script src="https://cdn.jsdelivr.net/npm/p5@2.0.3/lib/p5.min.js"></script>
+            <script src="sketch.js"></script>
+
+            <section>
+                <h2>Moss Growth Simulation</h2>
+                <div id="moss-garden"></div>
+            </section>
+            
         </section>
     </main>
 </body>

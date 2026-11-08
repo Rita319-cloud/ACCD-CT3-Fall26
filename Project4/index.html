@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Clingy Dog and Alert Meerkat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Clingy Dog and Alert Meerkat</h1>
+    <main>
+        <section>
+            <h2>About:</h2>
+            <p>Create two electronic pets: a "Clingy Dog" and an "Alert Meerkat." The Clingy Dog ​​wags its tail when petted, while the Alert Meerkat lets out a call to act as a sentry whenever something approaches.</p>
+            <img src="image/diagram.png" alt="diagram">
+
+            <h3>Clingy Dog</h3>
+            <p><strong>HOW IT WORKS:</strong> When tapped Piezo Disc, the LED lights up. Each time you tap it, the LED flashes once.</p>
+            <p><strong>WORLDVIEW:</strong> very clingy，senses taps</p>
+            <p><strong>SENSOR:</strong> Piezo Disc</p>
+            <p><strong>INPUT:</strong> tap rhythm</p>
+            <p><strong>OUTPUT:</strong> LED flashes</p>
+
+            <p><strong>OUTPUT/COMMUNICATION DEVICE:</strong> Micro Servo</p>
+
+            <h3>Alert Meerkat</h3>
+            <p><strong>HOW IT WORKS:</strong> When a hand comes close, the LCD shows the distance. When nothing is within range, it shows “---”.</p>
+            <p><strong>WORLDVIEW:</strong> highly alert，senses distance</p>
+            <p><strong>SENSOR:</strong> Ultrasonic Sensor</p>
+            <p><strong>INPUT:</strong> distance</p>
+            <p><strong>OUTPUT:</strong> LCD display</p>
+
+            <p><strong>OUTPUT/COMMUNICATION DEVICE:</strong> Piezo Buzzer</p>
+
+            <h2>How they communicate：</h2>
+            <h3>Clingy Dog → Alert Meerkat</h3>
+            <p>Dog’s tap rhythm is sent to Meerkat.</p>
+            <p class="communication-gap">Meerkat’s Piezo Buzzer responds to Dog’s tap rhythm.</p>
+
+            <h3>Alert Meerkat → Clingy Dog</h3>
+            <p>Meerkat’s distance is sent to Dog.</p>
+            <p>Dog’s Micro Servo responds only to Meerkat’s distance data.</p>
+
+        </section>
+    </main>
+</body>
+</html>

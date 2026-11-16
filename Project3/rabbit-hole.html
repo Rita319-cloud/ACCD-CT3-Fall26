@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Down the Rabbit Hole</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="machine">
+    <main>
+        <header>
+            <h1>Down the Rabbit Hole</h1>
+            <p class="intro">A mushroom, the sky above it,<br>a book, a museum, a song.<br>Each is found with one small fact<br>from the one before.</p>
+        </header>
+
+        <div id="plates"></div>
+
+        <div class="controls">
+            <button type="button" id="initTrigger">Begin</button>
+            <p id="status" role="status"></p>
+        </div>
+
+        <p class="back"><a href="index.html">About this machine</a></p>
+    </main>
+
+    <script>
+        const triggerButton = document.getElementById('initTrigger')
+        const platesArea = document.getElementById('plates')
+
+        // most-favourited, expert-verified mushroom photos; a random page each time
+        const iNatURL = "https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&photos=true&quality_grade=research&order_by=votes&per_page=50"
+        const meteoURL = "https://api.open-meteo.com/v1/forecast"
+        const openLibraryURL = "https://openlibrary.org/search.json"
+        // the old /v1/search was retired on 2026-10-01 — v1.1 is the replacement
+        const metSearchURL = "https://collectionapi.metmuseum.org/public/collection/v1.1/search"
+        const metObjectURL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"
+        const iTunesURL = "https://itunes.apple.com/search"
+
+        // the data handed from one step to the next
+        const chain = {}
+
+        // ---------- helpers ----------
+        const status = document.getElementById('status')
+        const showStatus = (text) => status.innerText = text
+
+        const el = (tag, className, text) => {
+            const node = document.createElement(tag)
+            if (className) node.className = className
+            if (text) node.innerText = text
+            return node
+        }
+
+        // a thin line down to the next plate, labelled with what is carried down it
+        const addDescent = (carried) => {
+            const descent = el('div', 'descent')
+            descent.appendChild(el('span', '', carried))
+            platesArea.appendChild(descent)
+        }
+
+        // one plate: number, an image in a plate mark, then a specimen label
+        const addPlate = (numeral, image, lines) => {
+            const plate = el('article', 'plate')
+            plate.appendChild(el('p', 'plate-no', "Plate " + numeral))
+            if (image) {
+                const figure = el('figure')
+                figure.appendChild(image)
+                plate.appendChild(figure)
+            }
+            lines.forEach((line) => plate.appendChild(line))
+            platesArea.appendChild(plate)
+            return plate
+        }
+
+        const img = (src, alt) => {
+            const image = el('img')
+            image.src = src
+            image.alt = alt
+            return image
+        }
+
+        // the meteorologist's cloud-cover symbol: a circle filled in as far as the sky is clouded
+        const cloudSymbol = (percent) => {
+            const r = 46, c = 52
+            const fraction = Math.min(percent, 100) / 100
+            let fill = ""
+            if (fraction >= 1) {
+                fill = '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="currentColor"/>'
+            } else if (fraction > 0) {
+                const angle = fraction * 2 * Math.PI
+                const x = c + r * Math.sin(angle)
+                const y = c - r * Math.cos(angle)
+                const largeArc = fraction > 0.5 ? 1 : 0
+                fill = '<path d="M' + c + ' ' + c + ' L' + c + ' ' + (c - r) + ' A' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x + ' ' + y + ' Z" fill="currentColor"/>'
+            }
+            const wrapper = el('div')
+            wrapper.innerHTML = '<svg width="104" height="104" viewBox="0 0 104 104" role="img" aria-label="' + percent + '% cloud cover">' +
+                fill + '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
+            return wrapper.firstChild
+        }
+
+        // fetch + JSON, and say exactly which step failed
+        const getJSON = (url, stepName) =>
+            fetch(url)
+                .then((response) => {
+                    if (!response.ok) throw new Error("HTTP " + response.status)
+                    return response.json()
+                })
+                .catch((err) => {
+                    throw new Error(stepName + " could not be reached (" + err.message + "). " + url)
+                })
+
+        // iTunes blocks fetch() from pages opened straight from your computer,
+        // so ask it the old-fashioned way (JSONP): load the answer as a <script>
+        const getJSONP = (url, stepName) =>
+            new Promise((resolve, reject) => {
+                const callbackName = "itunesCallback" + Date.now()
+                const script = document.createElement('script')
+                window[callbackName] = (data) => {
+                    resolve(data)
+                    delete window[callbackName]
+                    script.remove()
+                }
+                script.onerror = () => reject(new Error(stepName + " could not be reached. " + url))
+                script.src = url + "&callback=" + callbackName
+                document.body.appendChild(script)
+            })
+
+        // fallback search term: the longest word in a title ("The Tears of Saint Peter" → "Saint")
+        const longestWord = (text) => text.split(/[\s:,.;'"“”‘’()—-]+/).reduce((a, b) => b.length > a.length ? b : a, "") || text
+
+        // ---------- I. Mushroom (iNaturalist) ----------
+        const findMushroom = () =>
+            getJSON(iNatURL + "&page=" + (1 + Math.floor(Math.random() * 20)), "iNaturalist")
+                .then((data) => {
+                    console.log(data)
+                    const candidates = data.results.filter((o) => o.geojson && o.photos.length > 0)
+                    const obs = candidates[Math.floor(Math.random() * candidates.length)]
+                    const taxon = obs.taxon || {}
+                    const latin = taxon.name || "Fungus incognitus"
+                    const common = taxon.preferred_common_name || latin
+                    const place = obs.place_guess || "an unrecorded place"
+
+                    chain.lng = obs.geojson.coordinates[0]
+                    chain.lat = obs.geojson.coordinates[1]
+
+                    addPlate("I", img(obs.photos[0].url.replace("square", "medium"), "Photograph of " + common), [
+                        el('h2', '', common.charAt(0).toUpperCase() + common.slice(1)),
+                        el('p', 'latin', latin),
+                        el('p', 'note', "Found in " + place),
+                    ])
+                })
+
+        // ---------- II. Cloud (Open-Meteo) ----------
+        const lookAtClouds = () =>
+            getJSON(meteoURL + "?latitude=" + chain.lat + "&longitude=" + chain.lng + "&current=cloud_cover", "Open-Meteo")
+                .then((data) => {
+                    console.log(data)
+                    const cloud = data.current.cloud_cover
+                    // cloud cover → a year (0% would be 1900, too few books, so use 1950)
+                    chain.year = cloud === 0 ? 1950 : 1900 + cloud
+
+                    const ns = chain.lat >= 0 ? "N" : "S"
+                    const ew = chain.lng >= 0 ? "E" : "W"
+                    addDescent("its place, " + Math.abs(chain.lat).toFixed(2) + "° " + ns + ", " + Math.abs(chain.lng).toFixed(2) + "° " + ew)
+                    addPlate("II", cloudSymbol(cloud), [
+                        el('h2', '', cloud + "% of the sky is cloud"),
+                        el('p', 'note', "Above that mushroom, at this moment"),
+                        el('p', 'note', "1900 + " + cloud + " = " + chain.year),
+                    ])
+                })
+
+        // ---------- III. A book (Open Library) ----------
+        const findBook = () =>
+            getJSON(openLibraryURL + "?q=first_publish_year:" + chain.year + "&fields=title,author_name,cover_i&limit=30", "Open Library")
+                .then((data) => {
+                    console.log(data)
+                    // pick a random book, preferring ones with a cover
+                    const withCover = data.docs.filter((b) => b.cover_i)
+                    const pool = withCover.length > 0 ? withCover : data.docs
+                    const book = pool[Math.floor(Math.random() * pool.length)]
+                    const author = book.author_name ? book.author_name[0] : "Author unknown"
+                    chain.bookTitle = book.title
+
+                    const cover = book.cover_i ? img("https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg", "Cover of " + book.title) : null
+                    addDescent("the year " + chain.year)
+                    addPlate("III", cover, [
+                        el('h2', 'title', book.title),
+                        el('p', '', author),
+                        el('p', 'note', "First published in " + chain.year),
+                    ])
+                })
+
+        // ---------- IV. The Met ----------
+        // search; if nothing comes back, try the longest word of the title, then "cloud"
+        const searchMet = (terms) => {
+            const term = terms[0]
+            return getJSON(metSearchURL + "?hasImages=true&limit=10&q=" + encodeURIComponent(term), "The Met")
+                .then((data) => {
+                    if (data.objectIDs && data.objectIDs.length > 0) return pickMetObject(data.objectIDs.slice(0, 5), term)
+                    if (terms.length > 1) return searchMet(terms.slice(1))
+                    throw new Error("The Met has nothing for “" + term + "”.")
+                })
+        }
+
+        // try object IDs one by one until one actually has an image
+        const pickMetObject = (ids, term) =>
+            getJSON(metObjectURL + ids[0], "The Met")
+                .then((obj) => {
+                    if (obj.primaryImageSmall) return { obj, term }
+                    if (ids.length > 1) return pickMetObject(ids.slice(1), term)
+                    return searchMet(["cloud"])
+                })
+
+        const visitMet = () =>
+            searchMet([chain.bookTitle, longestWord(chain.bookTitle), "cloud"])
+                .then(({ obj, term }) => {
+                    console.log(obj)
+                    const maker = obj.artistDisplayName || obj.culture || "Maker unknown"
+                    chain.artTitle = obj.title
+
+                    addDescent("the words “" + term + "”")
+                    addPlate("IV", img(obj.primaryImageSmall, obj.title), [
+                        el('h2', 'title', obj.title),
+                        el('p', '', maker + (obj.objectDate ? ", " + obj.objectDate : "")),
+                        el('p', 'note', "The Metropolitan Museum of Art"),
+                    ])
+                })
+
+        // ---------- V. Music (iTunes) ----------
+        const searchSong = (terms) => {
+            const term = terms[0]
+            return getJSONP(iTunesURL + "?media=music&entity=song&limit=5&term=" + encodeURIComponent(term), "iTunes")
+                .then((data) => {
+                    const song = data.results.find((s) => s.previewUrl)
+                    if (song) return { song, term }
+                    if (terms.length > 1) return searchSong(terms.slice(1))
+                    return { song: null, term }
+                })
+        }
+
+        const playMusic = () =>
+            searchSong([chain.artTitle, longestWord(chain.artTitle)])
+                .then(({ song, term }) => {
+                    console.log(song)
+                    addDescent("the words “" + term + "”")
+                    if (!song) {
+                        addPlate("V", null, [
+                            el('h2', '', "Silence"),
+                            el('p', 'note', "No song answers to “" + term + "”."),
+                        ])
+                        return
+                    }
+
+                    const audio = el('audio')
+                    audio.src = song.previewUrl
+                    audio.controls = true
+
+                    addPlate("V", img(song.artworkUrl100.replace("100x100", "600x600"), "Album cover"), [
+                        el('h2', 'title', song.trackName),
+                        el('p', '', song.artistName),
+                        audio,
+                    ])
+                    audio.play().catch(() => {})
+                })
+
+        // ---------- one click = one plate ----------
+        const steps = [
+            { run: findMushroom, loading: "Looking for a mushroom…",       nextLabel: "Look at the sky above it" },
+            { run: lookAtClouds, loading: "Reading the sky…",              nextLabel: "Find a book from that year" },
+            { run: findBook,     loading: "Searching the library…",        nextLabel: "Take the title to the Met" },
+            { run: visitMet,     loading: "Walking through the Met…",      nextLabel: "Listen" },
+            { run: playMusic,    loading: "Listening…",                    nextLabel: "Begin again" },
+        ]
+        let currentStep = 0
+
+        const nextStep = () => {
+            // after the last plate, clear the page and begin again
+            if (currentStep === steps.length) {
+                platesArea.innerHTML = ""
+                currentStep = 0
+            }
+
+            const step = steps[currentStep]
+            triggerButton.disabled = true
+            showStatus(step.loading)
+
+            step.run()
+                .then(() => {
+                    currentStep++
+                    triggerButton.innerText = step.nextLabel
+                    showStatus("")
+                    const lastPlate = platesArea.lastElementChild
+                    if (lastPlate) lastPlate.scrollIntoView({ behavior: "smooth", block: "start" })
+                })
+                .catch((err) => {
+                    // stay on this step, so pressing the button again retries it
+                    showStatus(err.message + " Press the button to try again.")
+                })
+                .finally(() => triggerButton.disabled = false)
+        }
+
+        triggerButton.addEventListener("click", nextStep)
+    </script>
+</body>
+</html>

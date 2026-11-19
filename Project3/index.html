@@ -3,306 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Down the Rabbit Hole</title>
+    <title>Down the Rabbit Hole · Documentation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- Cormorant Garamond for titles only (same as the machine), Instrument Sans for everything else -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,300;1,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="documentation.css">
 </head>
-<body class="machine">
+<body>
     <main>
-        <header>
+
+        <header class="intro">
+            <p class="course">Documentation for The WWW as a Rube Goldberg Machine</p>
             <h1>Down the Rabbit Hole</h1>
-            <p class="intro">A mushroom, the sky above it,<br>a book, a museum, a song.<br>Each is found with one small fact<br>from the one before.</p>
+            <p class="summary">A mushroom, the sky above it, a book, a museum, a song. Five web services, each found with one small fact from the one before.</p>
+            <a class="button" href="rabbit-hole.html" target="_blank" rel="noopener">Open the machine</a>
         </header>
 
-        <div id="plates"></div>
+        <!-- ================= About ================= -->
+        <section>
+            <h2>About</h2>
+            <p class="lede">“Down the rabbit hole” is what happens when one small question leads to another, and another, until you end up somewhere you never meant to go.</p>
+            <p>This machine does that on purpose. It starts with a photograph of a mushroom and ends with a song. In between, five web services pass a single fact from hand to hand: a place, a percentage, a year, a few words. Each answer becomes the next question.</p>
+            <p>Nothing in the chain is useful. A cloud does not choose a book, and a book title has no reason to lead to a song. The point is the mechanism: the quiet, invisible relay of data between servers that usually happens behind every click.</p>
+            <p>The machine itself is styled like the plates of an old natural history atlas. Each step is a numbered plate, and the thin line between plates shows exactly what was carried down to the next one.</p>
+        </section>
 
-        <div class="controls">
-            <button type="button" id="initTrigger">Begin</button>
-            <p id="status" role="status"></p>
-        </div>
+        <!-- ================= Mechanism diagram ================= -->
+        <section>
+            <h2>How the machine works</h2>
+            <p>Each press of the button runs one step. Only one piece of data travels from each step to the next.</p>
 
-        <p class="back"><a href="index.html">About this machine</a></p>
+            <ol class="chain" aria-label="The chain of five services">
+                <li class="handoff">Trigger: a press of the button</li>
+
+                <li class="step">
+                    <span class="num">1</span>
+                    <div>
+                        <h3>A mushroom</h3>
+                        <p class="service">iNaturalist</p>
+                        <p>Returns a random, expert-verified mushroom photo and where it was found.</p>
+                    </div>
+                </li>
+                <li class="handoff">Passes <strong>its coordinates</strong></li>
+
+                <li class="step">
+                    <span class="num">2</span>
+                    <div>
+                        <h3>The sky above it</h3>
+                        <p class="service">Open-Meteo</p>
+                        <p>Returns the cloud cover at that spot, right now.</p>
+                    </div>
+                </li>
+                <li class="handoff">Passes <strong>1900 + cloud cover = a year</strong></li>
+
+                <li class="step">
+                    <span class="num">3</span>
+                    <div>
+                        <h3>A book</h3>
+                        <p class="service">Open Library</p>
+                        <p>Returns a random book first published in that year.</p>
+                    </div>
+                </li>
+                <li class="handoff">Passes <strong>the book’s title</strong></li>
+
+                <li class="step">
+                    <span class="num">4</span>
+                    <div>
+                        <h3>A museum object</h3>
+                        <p class="service">The Met Collection API</p>
+                        <p>Returns the first object with an image that matches the title.</p>
+                    </div>
+                </li>
+                <li class="handoff">Passes <strong>the object’s title</strong></li>
+
+                <li class="step">
+                    <span class="num">5</span>
+                    <div>
+                        <h3>A song</h3>
+                        <p class="service">iTunes Search</p>
+                        <p>Returns a matching song and plays a 30-second preview.</p>
+                    </div>
+                </li>
+            </ol>
+
+            <h3>When a search finds nothing</h3>
+            <p>Long titles often match nothing. When that happens, the machine tries again with only the longest word of the title. If the Met still has nothing, it searches for “cloud”. These fallbacks are part of the chain too, and they often produce the strangest results.</p>
+        </section>
+
+        <!-- ================= Responses to the brief ================= -->
+        <section>
+            <h2>Responses to the brief</h2>
+
+            <h3>What kind of data could be passed around?</h3>
+            <p>Deliberately small and dull data: a pair of coordinates, a percentage, a year, a title. None of it means anything to the next service. The machine treats a cloud cover of 73% as the year 1973, and a book title as a search term for a museum. The meaning is lost at every step, and that is where the surprise comes from.</p>
+
+            <h3>Which services could be chained together?</h3>
+            <p>Five free public services that have nothing to do with each other:</p>
+            <ul>
+                <li><a href="https://api.inaturalist.org/v1/docs/" target="_blank" rel="noopener">iNaturalist</a>, a citizen-science archive of nature observations</li>
+                <li><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>, live weather for any point on Earth</li>
+                <li><a href="https://openlibrary.org/developers/api" target="_blank" rel="noopener">Open Library</a>, the Internet Archive’s catalogue of books</li>
+                <li><a href="https://metmuseum.github.io/" target="_blank" rel="noopener">The Met Collection API</a>, The Metropolitan Museum of Art’s open-access collection</li>
+                <li><a href="https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html" target="_blank" rel="noopener">iTunes Search</a>, Apple’s music catalogue with 30-second previews</li>
+            </ul>
+            <p>None of them needs an API key, so the whole machine runs as a single static page.</p>
+
+            <h3>What would the triggers look like?</h3>
+            <p>A single button. Each press moves the visitor one step further down, and the button names the next step: “Look at the sky above it”, “Find a book from that year”, “Take the title to the Met”, “Listen”. Splitting the chain into presses lets the visitor watch each handover instead of seeing only the result.</p>
+
+            <h3>What would the end results be?</h3>
+            <p>A song, and never the same one twice. The mushroom is random, the cloud cover changes by the hour, and the book is picked at random from that year. Two journeys from testing:</p>
+            <ul class="journeys">
+                <li>Amanita mushrooms in Costa Rica → 73% cloud → 1973 → <em>Cinderella in Mink</em> by Roberta Leigh → Honoré Daumier’s <em>The new Cinderella</em> (1866)</li>
+                <li>Winter Teacher in Iowa → 1% cloud → 1901 → <em>The Bad Place</em> by Dean Koontz → Thomas Rowlandson’s <em>Bad Speculation</em> (1799) → “AMERIKKKAN IDOL” by Joey Bada$$</li>
+            </ul>
+        </section>
+
+        <!-- ================= Problems and Solutions ================= -->
+        <section>
+            <h2>Problems and Solutions</h2>
+
+            <ol class="problems">
+                <li>
+                    <span class="problem-no">01</span>
+                    <div class="problem-body">
+                        <p>Currently, clicking “Start” causes all content to appear at once. This needs to be changed so that each click of the button triggers a new piece of content.</p>
+                        <p>The music is not playing.</p>
+                        <iframe
+                        src="https://www.youtube.com/embed/mDQi2S6oCg0"
+                        title="Video"
+                        style="width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; margin-bottom: 0.75rem;"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                        <figure class="code">
+                            <figcaption>One click, one step</figcaption>
+                            <pre><code>const steps = [
+    { run: findMushroom, nextLabel: "Look at the sky above it" },
+    { run: lookAtClouds, nextLabel: "Find a book from that year" },
+    { run: findBook,     nextLabel: "Take the title to the Met" },
+    { run: visitMet,     nextLabel: "Listen" },
+    { run: playMusic,    nextLabel: "Begin again" },
+]
+let currentStep = 0
+
+const nextStep = () =&gt; {
+    // after the last step, clear the page and begin again
+    if (currentStep === steps.length) {
+        platesArea.innerHTML = ""
+        currentStep = 0
+    }
+
+    const step = steps[currentStep]
+    triggerButton.disabled = true
+
+    step.run()
+        .then(() =&gt; {
+            currentStep++                          // move on only if this step worked
+            triggerButton.innerText = step.nextLabel
+        })
+        .catch((err) =&gt; showStatus(err.message))  // stay here, so the next click retries
+        .finally(() =&gt; triggerButton.disabled = false)
+}
+
+triggerButton.addEventListener("click", nextStep)</code></pre>
+                        </figure>
+                        <figure class="code">
+                            <figcaption>Playing the music</figcaption>
+                            <pre><code>// iTunes blocks fetch() from pages opened straight from a computer,
+// so load the answer as a &lt;script&gt; instead (JSONP)
+const getJSONP = (url) =&gt;
+    new Promise((resolve, reject) =&gt; {
+        const callbackName = "itunesCallback" + Date.now()
+        const script = document.createElement('script')
+        window[callbackName] = (data) =&gt; {
+            resolve(data)
+            delete window[callbackName]
+            script.remove()
+        }
+        script.onerror = () =&gt; reject(new Error("iTunes could not be reached"))
+        script.src = url + "&amp;callback=" + callbackName
+        document.body.appendChild(script)
+    })
+
+// find a song with a preview, then play it
+getJSONP(iTunesURL + "?media=music&amp;entity=song&amp;limit=5&amp;term=" + encodeURIComponent(term))
+    .then((data) =&gt; {
+        const song = data.results.find((s) =&gt; s.previewUrl)
+        const audio = document.createElement('audio')
+        audio.src = song.previewUrl
+        audio.controls = true
+        musicSection.appendChild(audio)
+        audio.play().catch(() =&gt; {})   // if the browser blocks autoplay, the visitor presses play
+    })</code></pre>
+                        </figure>
+                    </div>
+                </li>
+
+                <li>
+                    <span class="problem-no">02</span>
+                    <div class="problem-body">
+                        <p>That works.</p>
+                        <iframe
+                        src="https://www.youtube.com/embed/xiHko0usxOI"
+                        title="Video"
+                        style="width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; margin-bottom: 0.75rem;"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                    </div>
+                </li>
+
+                <li>
+                    <span class="problem-no">03</span>
+                    <div class="problem-body">
+                        <p>Refine the design; the page should look elegant, classical, clean, and restrained—reminiscent of botanical illustrations from a natural history collection.</p>
+                        <figure class="screenshot">
+                            <img src="DowntheRabbitHole_3.png" alt="Screenshot of the redesigned machine">
+                        </figure>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <footer>
+            <a class="button" href="rabbit-hole.html" target="_blank" rel="noopener">Open the machine</a>
+            <p>Data from iNaturalist, Open-Meteo, Open Library, The Metropolitan Museum of Art and Apple iTunes.</p>
+        </footer>
+
     </main>
-
-    <script>
-        const triggerButton = document.getElementById('initTrigger')
-        const platesArea = document.getElementById('plates')
-
-        // most-favourited, expert-verified mushroom photos; a random page each time
-        const iNatURL = "https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&photos=true&quality_grade=research&order_by=votes&per_page=50"
-        const meteoURL = "https://api.open-meteo.com/v1/forecast"
-        const openLibraryURL = "https://openlibrary.org/search.json"
-        // the old /v1/search was retired on 2026-10-01 — v1.1 is the replacement
-        const metSearchURL = "https://collectionapi.metmuseum.org/public/collection/v1.1/search"
-        const metObjectURL = "https://collectionapi.metmuseum.org/public/collection/v1/objects/"
-        const iTunesURL = "https://itunes.apple.com/search"
-
-        // the data handed from one step to the next
-        const chain = {}
-
-        // ---------- helpers ----------
-        const status = document.getElementById('status')
-        const showStatus = (text) => status.innerText = text
-
-        const el = (tag, className, text) => {
-            const node = document.createElement(tag)
-            if (className) node.className = className
-            if (text) node.innerText = text
-            return node
-        }
-
-        // a thin line down to the next plate, labelled with what is carried down it
-        const addDescent = (carried) => {
-            const descent = el('div', 'descent')
-            descent.appendChild(el('span', '', carried))
-            platesArea.appendChild(descent)
-        }
-
-        // one plate: number, an image in a plate mark, then a specimen label
-        const addPlate = (numeral, image, lines) => {
-            const plate = el('article', 'plate')
-            plate.appendChild(el('p', 'plate-no', "Plate " + numeral))
-            if (image) {
-                const figure = el('figure')
-                figure.appendChild(image)
-                plate.appendChild(figure)
-            }
-            lines.forEach((line) => plate.appendChild(line))
-            platesArea.appendChild(plate)
-            return plate
-        }
-
-        const img = (src, alt) => {
-            const image = el('img')
-            image.src = src
-            image.alt = alt
-            return image
-        }
-
-        // the meteorologist's cloud-cover symbol: a circle filled in as far as the sky is clouded
-        const cloudSymbol = (percent) => {
-            const r = 46, c = 52
-            const fraction = Math.min(percent, 100) / 100
-            let fill = ""
-            if (fraction >= 1) {
-                fill = '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="currentColor"/>'
-            } else if (fraction > 0) {
-                const angle = fraction * 2 * Math.PI
-                const x = c + r * Math.sin(angle)
-                const y = c - r * Math.cos(angle)
-                const largeArc = fraction > 0.5 ? 1 : 0
-                fill = '<path d="M' + c + ' ' + c + ' L' + c + ' ' + (c - r) + ' A' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x + ' ' + y + ' Z" fill="currentColor"/>'
-            }
-            const wrapper = el('div')
-            wrapper.innerHTML = '<svg width="104" height="104" viewBox="0 0 104 104" role="img" aria-label="' + percent + '% cloud cover">' +
-                fill + '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
-            return wrapper.firstChild
-        }
-
-        // fetch + JSON, and say exactly which step failed
-        const getJSON = (url, stepName) =>
-            fetch(url)
-                .then((response) => {
-                    if (!response.ok) throw new Error("HTTP " + response.status)
-                    return response.json()
-                })
-                .catch((err) => {
-                    throw new Error(stepName + " could not be reached (" + err.message + "). " + url)
-                })
-
-        // iTunes blocks fetch() from pages opened straight from your computer,
-        // so ask it the old-fashioned way (JSONP): load the answer as a <script>
-        const getJSONP = (url, stepName) =>
-            new Promise((resolve, reject) => {
-                const callbackName = "itunesCallback" + Date.now()
-                const script = document.createElement('script')
-                window[callbackName] = (data) => {
-                    resolve(data)
-                    delete window[callbackName]
-                    script.remove()
-                }
-                script.onerror = () => reject(new Error(stepName + " could not be reached. " + url))
-                script.src = url + "&callback=" + callbackName
-                document.body.appendChild(script)
-            })
-
-        // fallback search term: the longest word in a title ("The Tears of Saint Peter" → "Saint")
-        const longestWord = (text) => text.split(/[\s:,.;'"“”‘’()—-]+/).reduce((a, b) => b.length > a.length ? b : a, "") || text
-
-        // ---------- I. Mushroom (iNaturalist) ----------
-        const findMushroom = () =>
-            getJSON(iNatURL + "&page=" + (1 + Math.floor(Math.random() * 20)), "iNaturalist")
-                .then((data) => {
-                    console.log(data)
-                    const candidates = data.results.filter((o) => o.geojson && o.photos.length > 0)
-                    const obs = candidates[Math.floor(Math.random() * candidates.length)]
-                    const taxon = obs.taxon || {}
-                    const latin = taxon.name || "Fungus incognitus"
-                    const common = taxon.preferred_common_name || latin
-                    const place = obs.place_guess || "an unrecorded place"
-
-                    chain.lng = obs.geojson.coordinates[0]
-                    chain.lat = obs.geojson.coordinates[1]
-
-                    addPlate("I", img(obs.photos[0].url.replace("square", "medium"), "Photograph of " + common), [
-                        el('h2', '', common.charAt(0).toUpperCase() + common.slice(1)),
-                        el('p', 'latin', latin),
-                        el('p', 'note', "Found in " + place),
-                    ])
-                })
-
-        // ---------- II. Cloud (Open-Meteo) ----------
-        const lookAtClouds = () =>
-            getJSON(meteoURL + "?latitude=" + chain.lat + "&longitude=" + chain.lng + "&current=cloud_cover", "Open-Meteo")
-                .then((data) => {
-                    console.log(data)
-                    const cloud = data.current.cloud_cover
-                    // cloud cover → a year (0% would be 1900, too few books, so use 1950)
-                    chain.year = cloud === 0 ? 1950 : 1900 + cloud
-
-                    const ns = chain.lat >= 0 ? "N" : "S"
-                    const ew = chain.lng >= 0 ? "E" : "W"
-                    addDescent("its place, " + Math.abs(chain.lat).toFixed(2) + "° " + ns + ", " + Math.abs(chain.lng).toFixed(2) + "° " + ew)
-                    addPlate("II", cloudSymbol(cloud), [
-                        el('h2', '', cloud + "% of the sky is cloud"),
-                        el('p', 'note', "Above that mushroom, at this moment"),
-                        el('p', 'note', "1900 + " + cloud + " = " + chain.year),
-                    ])
-                })
-
-        // ---------- III. A book (Open Library) ----------
-        const findBook = () =>
-            getJSON(openLibraryURL + "?q=first_publish_year:" + chain.year + "&fields=title,author_name,cover_i&limit=30", "Open Library")
-                .then((data) => {
-                    console.log(data)
-                    // pick a random book, preferring ones with a cover
-                    const withCover = data.docs.filter((b) => b.cover_i)
-                    const pool = withCover.length > 0 ? withCover : data.docs
-                    const book = pool[Math.floor(Math.random() * pool.length)]
-                    const author = book.author_name ? book.author_name[0] : "Author unknown"
-                    chain.bookTitle = book.title
-
-                    const cover = book.cover_i ? img("https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg", "Cover of " + book.title) : null
-                    addDescent("the year " + chain.year)
-                    addPlate("III", cover, [
-                        el('h2', 'title', book.title),
-                        el('p', '', author),
-                        el('p', 'note', "First published in " + chain.year),
-                    ])
-                })
-
-        // ---------- IV. The Met ----------
-        // search; if nothing comes back, try the longest word of the title, then "cloud"
-        const searchMet = (terms) => {
-            const term = terms[0]
-            return getJSON(metSearchURL + "?hasImages=true&limit=10&q=" + encodeURIComponent(term), "The Met")
-                .then((data) => {
-                    if (data.objectIDs && data.objectIDs.length > 0) return pickMetObject(data.objectIDs.slice(0, 5), term)
-                    if (terms.length > 1) return searchMet(terms.slice(1))
-                    throw new Error("The Met has nothing for “" + term + "”.")
-                })
-        }
-
-        // try object IDs one by one until one actually has an image
-        const pickMetObject = (ids, term) =>
-            getJSON(metObjectURL + ids[0], "The Met")
-                .then((obj) => {
-                    if (obj.primaryImageSmall) return { obj, term }
-                    if (ids.length > 1) return pickMetObject(ids.slice(1), term)
-                    return searchMet(["cloud"])
-                })
-
-        const visitMet = () =>
-            searchMet([chain.bookTitle, longestWord(chain.bookTitle), "cloud"])
-                .then(({ obj, term }) => {
-                    console.log(obj)
-                    const maker = obj.artistDisplayName || obj.culture || "Maker unknown"
-                    chain.artTitle = obj.title
-
-                    addDescent("the words “" + term + "”")
-                    addPlate("IV", img(obj.primaryImageSmall, obj.title), [
-                        el('h2', 'title', obj.title),
-                        el('p', '', maker + (obj.objectDate ? ", " + obj.objectDate : "")),
-                        el('p', 'note', "The Metropolitan Museum of Art"),
-                    ])
-                })
-
-        // ---------- V. Music (iTunes) ----------
-        const searchSong = (terms) => {
-            const term = terms[0]
-            return getJSONP(iTunesURL + "?media=music&entity=song&limit=5&term=" + encodeURIComponent(term), "iTunes")
-                .then((data) => {
-                    const song = data.results.find((s) => s.previewUrl)
-                    if (song) return { song, term }
-                    if (terms.length > 1) return searchSong(terms.slice(1))
-                    return { song: null, term }
-                })
-        }
-
-        const playMusic = () =>
-            searchSong([chain.artTitle, longestWord(chain.artTitle)])
-                .then(({ song, term }) => {
-                    console.log(song)
-                    addDescent("the words “" + term + "”")
-                    if (!song) {
-                        addPlate("V", null, [
-                            el('h2', '', "Silence"),
-                            el('p', 'note', "No song answers to “" + term + "”."),
-                        ])
-                        return
-                    }
-
-                    const audio = el('audio')
-                    audio.src = song.previewUrl
-                    audio.controls = true
-
-                    addPlate("V", img(song.artworkUrl100.replace("100x100", "600x600"), "Album cover"), [
-                        el('h2', 'title', song.trackName),
-                        el('p', '', song.artistName),
-                        audio,
-                    ])
-                    audio.play().catch(() => {})
-                })
-
-        // ---------- one click = one plate ----------
-        const steps = [
-            { run: findMushroom, loading: "Looking for a mushroom…",       nextLabel: "Look at the sky above it" },
-            { run: lookAtClouds, loading: "Reading the sky…",              nextLabel: "Find a book from that year" },
-            { run: findBook,     loading: "Searching the library…",        nextLabel: "Take the title to the Met" },
-            { run: visitMet,     loading: "Walking through the Met…",      nextLabel: "Listen" },
-            { run: playMusic,    loading: "Listening…",                    nextLabel: "Begin again" },
-        ]
-        let currentStep = 0
-
-        const nextStep = () => {
-            // after the last plate, clear the page and begin again
-            if (currentStep === steps.length) {
-                platesArea.innerHTML = ""
-                currentStep = 0
-            }
-
-            const step = steps[currentStep]
-            triggerButton.disabled = true
-            showStatus(step.loading)
-
-            step.run()
-                .then(() => {
-                    currentStep++
-                    triggerButton.innerText = step.nextLabel
-                    showStatus("")
-                    const lastPlate = platesArea.lastElementChild
-                    if (lastPlate) lastPlate.scrollIntoView({ behavior: "smooth", block: "start" })
-                })
-                .catch((err) => {
-                    // stay on this step, so pressing the button again retries it
-                    showStatus(err.message + " Press the button to try again.")
-                })
-                .finally(() => triggerButton.disabled = false)
-        }
-
-        triggerButton.addEventListener("click", nextStep)
-    </script>
 </body>
 </html>

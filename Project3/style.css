@@ -1,6 +1,5 @@
-/* Down the Rabbit Hole — shared styles
-   body.machine  → the machine itself (rabbit-hole.html)
-   body.doc      → the documentation (index.html) */
+/* Down the Rabbit Hole — styles for the machine (rabbit-hole.html) only.
+   The documentation page has its own file: documentation.css */
 
 :root {
     --paper: #ECEBE2;      /* cool linen, like an old plate's paper */
@@ -182,129 +181,6 @@ button:disabled { opacity: 0.45; cursor: wait; }
 }
 
 
-/* ================= the documentation (index.html) ================= */
-
-.doc main {
-    max-width: 38rem;
-    margin: 0 auto;
-    padding: 6rem 1.5rem 8rem;
-}
-
-.doc header {
-    text-align: center;
-    margin-bottom: 4.5rem;
-}
-
-.doc .subtitle {
-    color: var(--sepia);
-    font-style: italic;
-    margin: 0 0 2.5rem;
-}
-
-.doc section { margin-top: 4.5rem; }
-
-.doc h2 {
-    font-weight: 400;
-    font-style: italic;
-    font-size: 2.1rem;
-    line-height: 1.15;
-    margin: 0 0 1.25rem;
-}
-
-.doc h3 {
-    font-weight: 500;
-    font-size: 1.35rem;
-    margin: 2.25rem 0 0.5rem;
-}
-
-.doc p { margin: 0 0 1rem; text-wrap: pretty; }
-
-.doc .lede { font-size: 1.4rem; line-height: 1.5; }
-
-.doc ul { padding-left: 1.2rem; margin: 0 0 1rem; }
-.doc li { margin-bottom: 0.4rem; }
-
-.doc code {
-    font-family: inherit;
-    font-style: italic;
-    color: var(--sepia);
-}
-
-/* the mechanism diagram: five stations joined by labelled descents */
-.diagram {
-    margin: 2.5rem 0 1rem;
-    text-align: center;
-}
-
-.station {
-    border: 1px solid var(--rule);
-    outline: 1px solid var(--rule);
-    outline-offset: 5px;
-    background: var(--paper-inset);
-    padding: 1.1rem 1.25rem 1.2rem;
-    max-width: 22rem;
-    margin: 0 auto;
-}
-
-.station .plate-no { margin-bottom: 0.25rem; }
-
-.station h3 {
-    margin: 0;
-    font-weight: 500;
-    font-size: 1.35rem;
-}
-
-.station p {
-    margin: 0.2rem 0 0;
-    color: var(--sepia);
-    font-size: 1.05rem;
-}
-
-.diagram .descent { height: 6rem; margin: 1.25rem 0; }
-
-.diagram .trigger {
-    font-style: italic;
-    color: var(--verdigris);
-    margin: 0 0 1.25rem;
-}
-
-/* example journeys */
-.journey {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.5rem;
-    border-left: 1px solid var(--rule);
-}
-
-.journey li {
-    padding-left: 1.25rem;
-    margin: 0 0 0.6rem;
-}
-
-.enter {
-    text-align: center;
-    margin: 0;
-}
-
-.enter a {
-    display: inline-block;
-    text-decoration: none;
-    border: 1px solid var(--verdigris);
-    padding: 0.55rem 1.75rem 0.6rem;
-    transition: background 200ms, color 200ms;
-}
-
-.enter a:hover { background: var(--verdigris); color: var(--paper); }
-
-.doc footer {
-    margin-top: 5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--rule);
-    font-size: 1.05rem;
-    color: var(--sepia);
-}
-
-
 /* ================= motion & small screens ================= */
 
 @keyframes settle {
@@ -317,7 +193,7 @@ button:disabled { opacity: 0.45; cursor: wait; }
 }
 
 @media (max-width: 480px) {
-    .machine main, .doc main { padding-top: 4rem; }
+    .machine main { padding-top: 4rem; }
 
     /* on a narrow screen the label sits under the line instead of beside it */
     .descent span {

@@ -1,48 +1,197 @@
+/* =========================================================
+   Project 1 documentation — Swiss grid, one inflated headline
+   ========================================================= */
+
+:root {
+    --blue:  #1238FF;   /* the one saturated field (hero) */
+    --ink:   #000000;   /* text, rules */
+    --paper: #FFFFFF;   /* page */
+    --mist:  #EEEEEE;   /* image + video placeholders */
+    --grey:  #707070;   /* captions, secondary text */
+
+    --gutter: clamp(16px, 3vw, 40px);
+    --font: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+/* keep headings clear of the sticky top bar when jumping from the nav */
+#about, #process, #play { scroll-margin-top: 50px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
 body {
-    font-family: Helvetica, Arial, sans-serif;
-    margin: 40px 0;
-    line-height: 1.6;
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 18px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-h1 {
-    font-size: 36px;
-    margin-bottom: 30px;
-    text-align: center;
+img { display: block; width: 100%; height: auto; background: var(--mist); }
+
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--blue); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px var(--gutter);
+    background: var(--blue); color: var(--paper);
+    font-size: 15px; font-weight: 600;
+}
+.topbar nav { display: flex; gap: 24px; }
+.topbar a { text-decoration: none; }
+.topbar a:hover { color: var(--paper); text-decoration: underline; }
+
+/* ---------- Hero: the inflated title ---------- */
+.hero {
+    background: var(--blue); color: var(--paper);
+    padding: clamp(48px, 10vw, 140px) var(--gutter) var(--gutter);
+    min-height: 78vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+}
+.hero h1 {
+    margin: 0;
+    /* sized so the longest word ("documentation", ~9.4em wide) always fits */
+    font-size: clamp(34px, calc((100vw - 2 * var(--gutter)) / 9.8), 190px);
+    font-weight: 900;
+    font-stretch: 125%;               /* widest cut = "inflated" letters */
+    font-variation-settings: "wdth" 125;
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    max-width: 11ch;
+}
+.hero-caption {
+    margin: 32px 0 0;
+    font-size: clamp(16px, 1.6vw, 22px);
+    font-weight: 500;
 }
 
-main {
-    max-width: 900px;       
-    margin: 0 auto; 
-    /* 左右自动留空，实现居中 */
-    padding: 0 20px;        
-    /* 左右内边距，防止贴边 */
+/* ---------- Content blocks: 12-column Swiss grid ---------- */
+main { padding: 0 var(--gutter); }
+
+.block {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gutter);
+    padding: 28px 0 clamp(64px, 9vw, 128px);
+    border-top: 3px solid var(--ink);
+}
+.block:first-child { border-top: 0; }
+
+.block h2 {
+    grid-column: 1 / span 4;
+    margin: 0;
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 800;
+    font-stretch: 112%;
+    font-variation-settings: "wdth" 112;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    align-self: start;
+    position: sticky; top: 72px;
+}
+.content { grid-column: 6 / span 7; }
+.content > p { max-width: 62ch; margin: 0 0 1.1em; }
+
+.lead {
+    font-size: clamp(21px, 2vw, 27px);
+    line-height: 1.32;
+    font-weight: 500;
+    letter-spacing: -0.01em;
 }
 
-p {
-    font-size: 16px;
-    color: #333;
-    margin: 15px 30px; 
-    text-align: justify;
-}
+figure { margin: 0 0 40px; }
+figcaption { margin-top: 10px; font-size: 14px; color: var(--grey); }
 
-section {
-    margin-bottom: 60px;
+/* ---------- Numbered process steps ---------- */
+.steps { list-style: none; margin: 48px 0 0; padding: 0; counter-reset: step; }
+.steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    column-gap: 20px;
+    padding: 24px 0 36px;
+    border-top: 1px solid var(--ink);
 }
-
-.video {
-    margin: 15px 0;
-    padding: 0;
+.steps li::before {
+    content: counter(step);
+    grid-row: 1 / span 3;
+    font-size: 64px;
+    font-weight: 900;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    line-height: 0.8;
+    color: var(--blue);
 }
+.steps p { margin: 0 0 20px; max-width: 58ch; }
+.steps figure, .steps .video-slot { grid-column: 2; margin: 0; }
 
-.video iframe {
+.video-slot {
+    aspect-ratio: 16 / 9;
+    background: var(--mist);
+    display: grid; place-items: center;
+    color: var(--grey); font-size: 15px;
+}
+.video-slot iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* ---------- Play with it: black stage ---------- */
+.play { background: var(--ink); color: var(--paper); }
+.play-head {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gutter);
+    align-items: end;
+    padding: 28px var(--gutter) 32px;
+    border-top: 3px solid var(--blue);
+}
+.play-head h2 {
+    grid-column: 1 / span 5;
+    margin: 0;
+    font-size: clamp(40px, 7vw, 110px);
+    font-weight: 900;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+}
+.play-head p { grid-column: 6 / span 5; margin: 0; max-width: 46ch; color: #CFCFCF; }
+.play-head a { grid-column: 11 / span 2; justify-self: end; font-weight: 600; }
+.play-head a:hover { color: var(--paper); text-decoration-color: var(--blue); }
+
+.play iframe {
+    display: block;
     width: 100%;
-    height: 530px;
-    border: none;
+    height: 82vh;
+    min-height: 520px;
+    border: 0;
+    background: var(--ink);
 }
 
-img {
-    display: block;   
-    margin: 20px auto 0 auto; 
-    max-width: 100%;
-    height: auto;
+/* ---------- Tablet / mobile: single column ---------- */
+@media (max-width: 860px) {
+    .block, .play-head { grid-template-columns: 1fr; row-gap: 24px; }
+    .block h2, .content,
+    .play-head h2, .play-head p, .play-head a { grid-column: 1 / -1; }
+    .block h2 { position: static; }
+    .play-head a { justify-self: start; }
+    .hero { min-height: 60vh; }
+}
+@media (max-width: 520px) {
+    body { font-size: 17px; }
+    .topbar nav { gap: 14px; }
+    .steps li { grid-template-columns: 2.75rem 1fr; column-gap: 12px; }
+    .steps li::before { font-size: 40px; }
+    /* phones: a slightly narrower cut lets the title grow */
+    .hero h1 {
+        font-stretch: 100%;
+        font-variation-settings: "wdth" 100;
+        font-size: calc((100vw - 2 * var(--gutter)) / 7.9);
+    }
+    .hero { min-height: 56vh; }
 }

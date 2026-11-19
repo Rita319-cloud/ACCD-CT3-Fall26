@@ -1,0 +1,12 @@
+canvas { position: fixed; top: 0; left: 0; }
+html, body { margin: 0; background: #000; overflow: hidden; font-family: -apple-system, "Helvetica Neue", sans-serif; }
+#panel {
+  position: fixed; top: 12px; left: 12px; z-index: 10;
+  background: rgba(20,20,20,.85); color: #ddd; font-size: 12px;
+  padding: 10px 12px; border-radius: 8px; width: 220px;
+}
+#panel label { display: flex; justify-content: space-between; margin: 6px 0 2px; }
+#panel input[type=range] { width: 100%; }
+#panel .row { display: flex; gap: 6px; margin-top: 8px; }
+#panel input[type=text] { width: 40px; background:#111; color:#fff; border:1px solid #444; text-align:center; font-size:14px; }
+#toggle { position: fixed; top: 12px; right: 12px; z-index: 10; background:#222; color:#ddd; border:0; padding:6px 10px; border-radius:6px; cursor:pointer; }

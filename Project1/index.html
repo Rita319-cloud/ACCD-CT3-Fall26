@@ -1,17 +1,94 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Project 1 documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Project 1 documentation</h1>
+
+    <!-- ===== Top bar ===== -->
+    <header class="topbar">
+        <span>Project 1</span>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#process">Kluding</a>
+            <a href="#play">Play with it</a>
+        </nav>
+    </header>
+
+    <!-- ===== Hero: one big field of colour, inflated title ===== -->
+    <section class="hero">
+        <h1>Project 1 documentation</h1>
+        <p class="hero-caption">Mouse-driven inflating type, recreated in p5.js</p>
+    </section>
+
     <main>
-        <section>
-            <img src="image/ref.jpg" alt="reference">
-            <p>reference: Schultzschultz</p>
+
+        <!-- ===== About ===== -->
+        <section class="block" id="about">
+            <h2>About</h2>
+            <div class="content">
+                <figure>
+                    <img src="image/ref.jpg" alt="reference">
+                    <figcaption>reference: Schultzschultz</figcaption>
+                </figure>
+                <p class="lead">At the beginning, I wanted to work on a physical computing project: using components like sliders to control the size, position, and interrelationships of on-screen content (FC Variable by robenrobin.nl).</p>
+                <p>However, as I explored the projects in my collection folder, I decided to focus on something I haven’t done before. Many thanks to Maxim for recommending <a href="https://schultzschultz.com/">Schultzschultz</a>, their typography projects are fascinating.</p>
+                <p>Among the many amazing projects, I chose a typeface design that deforms based on the mouse's position. As the mouse moves, the slender characters expand and contract. Hovering the mouse causes the letters to inflate like balloons, while moving it away allows them to shrink back to their original shape. This real-time interaction looks incredibly cool.</p>
+                <p>After selecting my reference, I worked backward from the result to figure out the implementation method. I knew it could be done using p5.js, but I wasn't sure of the specific steps.</p>
+            </div>
         </section>
+
+        <!-- ===== Process (a real sequence, so it is numbered) ===== -->
+        <section class="block" id="process">
+            <h2>Kluding</h2>
+            <div class="content">
+                <p class="lead">Here is the process I followed to recreate the Schultzschultz project with the help of AI:</p>
+
+                <ol class="steps">
+                    <li>
+                        <p>Uploaded the video for the AI to analyze the technique and generate the code.</p>
+                    </li>
+                    <li>
+                        <p>Copied the code to preview the result; the output was very close to the original.</p>
+                        
+                        <figure><img src="image/documentation1.png" alt="documentation"></figure>
+                    </li>
+                    <li>
+                        <p>The font was too thin, so I needed to make it bolder. Also, the letters were being obscured by the slider when the window was resized, so the webpage needed to be responsive.</p>
+                        <figure><img src="image/documentation.png" alt="documentation"></figure>
+                    </li>
+                    <li>
+                        <p>Asked the AI to make adjustments based on this feedback, resulting in an excellent outcome. Expanded the project from a single letter "R" to the full 26-letter alphabet.</p>
+                
+                        <figure><img src="image/documentation2.png" alt="documentation"></figure>
+                        <figure><img src="image/documentation3.png" alt="documentation"></figure>
+                    </li>
+                    <li>
+                        <p>Had the AI annotate the code and explaining the underlying implementation principles.</p>
+                        <figure><img src="image/diagram.jpg" alt="diagram"></figure>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
     </main>
+
+    <!-- ===== Play with it: full-bleed black stage for the sketch ===== -->
+    <section class="play" id="play">
+        <div class="play-head">
+            <h2>Play with it</h2>
+            <p>Hover over the letter to inflate it. Type any letter A–Z in the panel, and use the sliders to change the effect.</p>
+            <a href="sketch/index.html" target="_blank">Open full screen</a>
+        </div>
+        <!-- Interactive p5.js sketch: its own files live in the sketch/ folder -->
+        <iframe src="sketch/index.html" title="Inflate Type — interactive p5.js sketch"></iframe>
+    </section>
+
 </body>
 </html>

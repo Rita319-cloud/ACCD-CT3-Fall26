@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inflate Type — Mouse Deformation</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+<button id="toggle">Params</button>
+<div id="panel">
+  <div class="row">Letter <input id="letter" type="text" maxlength="1" value="R"></div>
+  <label>Radius <span id="v_radius"></span></label>
+  <input id="radius" type="range" min="40" max="400" value="170">
+  <label>Magnify <span id="v_mag"></span></label>
+  <input id="mag" type="range" min="0" max="100" value="45">
+  <label>Base weight <span id="v_base"></span></label>
+  <input id="base" type="range" min="0" max="80" value="34">
+  <label>Local weight <span id="v_local"></span></label>
+  <input id="local" type="range" min="0" max="120" value="46">
+  <label>Extrude depth <span id="v_depth"></span></label>
+  <input id="depth" type="range" min="0" max="80" value="34">
+  <label>Follow ease <span id="v_ease"></span></label>
+  <input id="ease" type="range" min="2" max="40" value="12">
+</div>
+
+    <script src="sketch.js"></script>
+  </body>
+</html>

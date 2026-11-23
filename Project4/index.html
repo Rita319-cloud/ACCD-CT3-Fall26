@@ -7,10 +7,14 @@
 </head>
 <body>
     <h1>Clingy Dog and Alert Meerkat</h1>
+    <div class="layout">
+    <nav id="toc">
+        <p class="toc-title">Contents</p>
+    </nav>
     <main>
         <section>
             <h2>About:</h2>
-            <p>Create two electronic pets: a "Clingy Dog" and an "Alert Meerkat." The Clingy Dog ​​wags its tail when petted, while the Alert Meerkat lets out a call to act as a sentry whenever something approaches.</p>
+            <p>Create two electronic pets: a "Clingy Dog" and an "Alert Meerkat." The Clingy Dog wags its tail when petted, while the Alert Meerkat lets out a call to act as a sentry whenever something approaches.</p>
             <img src="image/diagram.png" alt="diagram">
 
             <h3>Clingy Dog</h3>
@@ -41,6 +45,235 @@
             <p>Dog’s Micro Servo responds only to Meerkat’s distance data.</p>
 
         </section>
+
+        <section>
+            <h2>Adjustments</h2>
+            <p>After discussing the diagram with the Maxim in class, we found that both the Ultrasonic Sensor and the LCD need 5V, and the ESP32 Feather can't power both at the same time. So we replaced the LCD with 3 LEDs, which show the sensed distance by the number of LEDs that light up. Within 30 cm, 1 LED lights up; within 20 cm, 2 LEDs light up; within 10 cm, 3 LEDs light up.</p>
+
+            <h2>Updated Diagram</h2>
+            <img src="image/diagram2.png" alt="diagram">
+
+
+            <h2>Hardware Connection - Meerkat</h2>
+            <img src="image/Meerkat.JPG" alt="meerkat hardware connection">
+
+        </section>
+
+        <section>
+            <h2>Individual Testing</h2>
+            <p>I was responsible for Alert Meerkat, so I tested Alert Meerkat.</p>
+
+            <h3>1. LEDs did not light up</h3>
+            <p>I moved my hand in front of the Ultrasonic Sensor, but the LEDs did not light up.</p>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/sJDDcd4W7aw" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+<pre><code>const int LED1 = 27;
+const int LED2 = 33;
+const int LED3 = 32;
+
+void setup() {
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+}
+
+// Light up 0–3 LEDs
+void showLevel(int count) {
+  digitalWrite(LED1, count &gt;= 1 ? HIGH : LOW);
+  digitalWrite(LED2, count &gt;= 2 ? HIGH : LOW);
+  digitalWrite(LED3, count &gt;= 3 ? HIGH : LOW);
+}
+
+void loop() {
+  float distance = readDistance();
+
+  int count;
+  if (distance &lt; 0 || distance &gt; 30) count = 0;  // too far or no echo
+  else if (distance &gt; 20)            count = 1;  // far
+  else if (distance &gt; 10)            count = 2;  // middle
+  else                               count = 3;  // near
+
+  showLevel(count);
+  delay(200);
+}</code></pre>
+            
+
+            <h3>2. LEDs flickered</h3>
+            <p>The LEDs lit up in the right number based on the hand's distance, but they flickered. For example, within 10 cm all three LEDs should stay on, but they would turn off and then light up again.</p>
+
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/zFBcUbeUSzQ" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+<pre><code>// Measure 5 times and use the middle value, to filter out jumpy readings
+float readDistance() {
+  float values[5];
+  int n = 0;
+  for (int i = 0; i &lt; 5; i++) {
+    float d = readOnce();
+    if (d &gt; 0) values[n++] = d;
+    delay(40);
+  }
+  if (n == 0) return -1;
+  for (int i = 0; i &lt; n - 1; i++)
+    for (int j = i + 1; j &lt; n; j++)
+      if (values[j] &lt; values[i]) { float t = values[i]; values[i] = values[j]; values[j] = t; }
+  return values[n / 2];
+}
+
+// Boundaries at 30 / 20 / 10 cm, with a 2 cm margin so the LEDs don't switch back and forth
+int levelFor(float d, int level) {
+  const float boundary[] = {30, 20, 10};
+  const float MARGIN = 2;
+  while (level &lt; 3 &amp;&amp; d &lt; boundary[level] - MARGIN) level++;
+  while (level &gt; 0 &amp;&amp; d &gt; boundary[level - 1] + MARGIN) level--;
+  return level;
+}
+
+void loop() {
+  float distance = readDistance();
+  if (distance &lt; 0) {
+    missCount++;
+    if (missCount &gt;= 3) currentLevel = 0;  // turn off only after ~1 s with no echo
+  } else {
+    missCount = 0;
+    currentLevel = levelFor(distance, currentLevel);
+  }
+  showLevel(currentLevel);
+}</code></pre>
+            
+
+            <h3>3. LEDs work accurately</h3>
+            <p>After the adjustment, the LEDs lit up accurately based on the hand's distance.</p>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/dBx0HfbMk6c" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <h3>4. Piezo Buzzer test</h3>
+            <p>I tested the Piezo Buzzer, and the test was successful.</p>
+
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/LcZJuBhyc-0" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+<pre><code>const int BUZZER_PIN = 21;   // D21
+const int BEEP_FREQ = 2400;  // pitch (Hz)
+const int BEEP_LEN = 80;     // length of each beep (ms)
+
+// Play back a rhythm of gaps, e.g. "200,600,200"
+void playRhythm(String rhythm) {
+  tone(BUZZER_PIN, BEEP_FREQ, BEEP_LEN);
+  delay(BEEP_LEN);
+
+  int start = 0;
+  while (start &lt; rhythm.length()) {
+    int comma = rhythm.indexOf(',', start);
+    if (comma == -1) comma = rhythm.length();
+    int gap = rhythm.substring(start, comma).toInt();
+    delay(gap);
+    tone(BUZZER_PIN, BEEP_FREQ, BEEP_LEN);
+    delay(BEEP_LEN);
+    start = comma + 1;
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  playRhythm("200,600,200");
+  delay(3000);  // repeat every 3 seconds
+}</code></pre>
+          
+        </section>
+
+        <section>
+            <h2>Communication Testing</h2>
+
+            <h3>1. Buzzer did not match the taps</h3>
+            <p>When we tapped the Piezo Disc, the Piezo Buzzer didn't match the number of taps. No matter how many times we tapped, it only beeped once. This was because my teammate's code sent "the time of each tap" rather than "the gaps between taps." I adjusted the code so that after receiving the tap times, it subtracts each time from the next one to get the gaps, then plays them back.</p>
+<pre><code>// The data received is the time of each tap, e.g. "0,1625,4376"
+void playRhythm(String rhythm) {
+  int start = 0;
+  long prev = -1;
+
+  while (start &lt; rhythm.length()) {
+    int comma = rhythm.indexOf(',', start);
+    if (comma == -1) comma = rhythm.length();
+    long t = rhythm.substring(start, comma).toInt();
+
+    if (prev &gt;= 0) {
+      long gap = t - prev - BEEP_LEN;   // time to wait between two taps
+      if (gap &gt; 0) delay(gap);
+    }
+    tone(BUZZER_PIN, BEEP_FREQ, BEEP_LEN);
+    delay(BEEP_LEN);
+
+    prev = t;
+    start = comma + 1;
+  }
+}</code></pre>
+
+            <h3>2. Buzzer matches the taps</h3>
+            <p>After the adjustment, the Piezo Buzzer matched the number of taps on the Piezo Disc.</p>
+
+             <div class="video">
+                <iframe src="https://www.youtube.com/embed/sMhJtYYF_qY" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <h3>3. Micro Servo responds to distance</h3>
+            <p>The Micro Servo did not respond to the distance (we later found that my teammate had forgotten to include the code that controls the Micro Servo). After adding the code, the Micro Servo responded to the distance.</p>
+            
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/H3kHDh_zHj0" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <section>
+            <h2>Learning</h2>
+            <p>Through this project, I got reacquainted with the physical computing workflow: understanding the assignment requirements, discussing and designing a plan based on the hardware we had bought, making the diagram, learning Adafruit IO through a joystick, building the two electronic beings separately, and finally testing and debugging.</p>
+            
+            <p>The whole process was really brain-burning, but getting data in real time and having the system respond to it felt really cool.</p>
+
+        </section>
     </main>
+    </div>
+
+    <script>
+    // 根据页面里的 h2 / h3 自动生成左侧目录，点击跳转，滚动时高亮当前位置
+    (function () {
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h2, main h3');
+        const list = document.createElement('ul');
+        const links = [];
+
+        headings.forEach(function (h, i) {
+            if (!h.id) h.id = 'section-' + (i + 1);
+            const li = document.createElement('li');
+            li.className = h.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent.replace(/[:：]\s*$/, '');  // 去掉标题末尾的冒号
+            li.appendChild(a);
+            list.appendChild(li);
+            links.push(a);
+        });
+        toc.appendChild(list);
+
+        function update() {
+            let current = 0;
+            headings.forEach(function (h, i) {
+                if (h.getBoundingClientRect().top <= 120) current = i;
+            });
+            links.forEach(function (a, i) {
+                a.classList.toggle('active', i === current);
+            });
+        }
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+    })();
+    </script>
 </body>
 </html>

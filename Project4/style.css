@@ -1,69 +1,214 @@
+/* ---------- 基础 ---------- */
 body {
     font-family: Helvetica, Arial, sans-serif;
-    margin: 40px 0;
+    margin: 0;
+    padding: 60px 0 80px;
     line-height: 1.6;
+    color: #222;
+    background: #fff;
 }
 
-h1 {
-    font-size: 36px;
-    margin-bottom: 30px;
-    text-align: center;
+html {
+    scroll-behavior: smooth;   /* 点击目录时平滑滚动 */
 }
 
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-h3 {
-    font-size: 16px;
-    margin-bottom: 15px;
-    text-align: left;
+/* ---------- 左侧目录 + 右侧正文 ---------- */
+.layout {
+    display: flex;
+    gap: 56px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;     /* 左右内边距，防止贴边 */
 }
 
 main {
-    max-width: 900px;       
-    margin: 0 auto; 
-    /* 左右自动留空，实现居中 */
-    padding: 0 20px;        
-    /* 左右内边距，防止贴边 */
+    flex: 1;
+    min-width: 0;        /* 防止长代码撑宽正文 */
+    max-width: 800px;
 }
 
+/* 点击跳转后，标题不贴着窗口顶部 */
+main h2, main h3 {
+    scroll-margin-top: 24px;
+}
+
+/* ---------- 目录 ---------- */
+#toc {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;    /* 滚动时目录固定在左侧 */
+    top: 24px;
+    align-self: flex-start;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.toc-title {
+    font-size: 13px;
+    color: #888;
+    margin: 0 0 12px;
+}
+
+#toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid #e5e5e5;
+}
+
+#toc li a {
+    display: block;
+    padding: 5px 12px;
+    margin-left: -1px;               /* 让高亮竖线盖住灰线 */
+    border-left: 2px solid transparent;
+    color: #666;
+    text-decoration: none;
+    line-height: 1.4;
+}
+
+#toc li.toc-h3 a {
+    padding-left: 26px;              /* h3 缩进一级 */
+    font-size: 13px;
+}
+
+#toc li a:hover {
+    color: #222;
+}
+
+#toc li a.active {
+    color: #222;
+    font-weight: 600;
+    border-left-color: #222;
+}
+
+/* ---------- 窄屏：目录放到正文上方 ---------- */
+@media (max-width: 900px) {
+    h1 {
+        max-width: none;
+        padding: 0 24px;
+    }
+    .layout {
+        display: block;
+    }
+    #toc {
+        position: static;
+        width: auto;
+        max-height: none;
+        margin-bottom: 48px;
+    }
+}
+
+/* ---------- 标题 ---------- */
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+    text-align: left;
+    /* 和下面的 .layout 一样宽、一样居中；左边空出目录宽度 220 + 间距 56，和正文对齐 */
+    max-width: 844px;
+    margin: 0 auto 56px;
+    padding: 0 24px 0 300px;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 40px 0 16px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+}
+
+/* ---------- 正文 ---------- */
 p {
     font-size: 16px;
     color: #333;
-    margin: 0px 15px; 
-    text-align: justify;
+    margin: 0 0 8px;
 }
 
 strong {
-    color: gray;
+    color: #888;
     font-weight: normal;
+    font-size: 13px;
+    letter-spacing: 0.04em;
 }
 
 .communication-gap {
     margin-bottom: 1em;
 }
 
+/* ---------- 分区：每个 section 之间加一条细线 ---------- */
 section {
-    margin-bottom: 60px;
+    padding-bottom: 48px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
+section:last-child {
+    border-bottom: none;
+}
+
+section > h2:first-child {
+    margin-top: 0;
+}
+
+/* ---------- 代码块 ---------- */
+pre {
+    background: #f5f5f3;
+    border: 1px solid #e5e5e2;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 16px 0 24px;
+    overflow-x: auto;    /* 代码太长时左右滚动，不撑破页面 */
+}
+
+code {
+    font-family: Menlo, Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #222;
+}
+
+/* ---------- 图片 ---------- */
+img {
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---------- 视频 ---------- */
 .video {
-    margin: 15px 0;
+    margin: 16px 0 24px;
     padding: 0;
 }
 
 .video iframe {
     width: 100%;
-    height: 530px;
+    aspect-ratio: 16 / 9;   /* 按宽度自动算高度，手机上也不会变形 */
+    height: auto;
     border: none;
+    border-radius: 6px;
 }
 
-img {
-    display: block;   
-    margin: 20px auto 0 auto; 
-    max-width: 100%;
-    height: auto;
+/* ---------- 表格 ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 15px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+th {
+    color: #888;
+    font-weight: normal;
 }
